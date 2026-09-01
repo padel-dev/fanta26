@@ -16,11 +16,11 @@ const ASTA_CONFIG = {
   // ── IDENTITÀ ──────────────────────────────────────────────────────────────
   title:       'ASTA FANTACALCIO',
   titleAccent: 'FANTACALCIO',
-  edition:     'V EDIZIONE · 2026',
-  eyebrow:     'Torneo dei Quartieri · Benevento',
-  tagline:     'Le squadre che prendono forma e i giocatori ancora liberi, aggiornati in diretta.',
-  pageTitle:   'Asta Fantacalcio – Torneo dei Quartieri',
-  footerSub:   'Torneo dei Quartieri · Asta Fantacalcio 2026',
+  edition:     'EDIZIONE · 2026/2027',
+  eyebrow:     'FantaFedelissimi',
+  tagline:     'Le squadre aggiornate in diretta.',
+  pageTitle:   'Asta Fantacalcio – FantaFedelissimi',
+  footerSub:   'FantaFedelissimi · Asta Fantacalcio 2026',
 
   // ── PALETTE — tabellone da asta, non campo da gioco ────────────────────────
   palette: {
