@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title"></title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; overflow-x: hidden; }
+  .court-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03; background-image: linear-gradient(90deg, var(--accent) 1px, transparent 1px), linear-gradient(0deg, var(--accent) 1px, transparent 1px); background-size: 48px 48px; }
+
+  /* ── HERO ── */
+  .hero { position: relative; z-index: 1; min-height: 62vh; display: flex; flex-direction: column; justify-content: center; padding: 5rem 2rem 3rem; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 800px; height: 600px; background: radial-gradient(ellipse at 50% 30%, rgba(45,184,102,0.18) 0%, transparent 65%); pointer-events: none; }
+  .hero-inner { max-width: 860px; margin: 0 auto; width: 100%; position: relative; z-index: 1; }
+  .hero-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 12px; }
+  .hero-eyebrow::before { content: ''; display: inline-block; width: 32px; height: 1px; background: var(--accent); }
+  .hero h1 { font-family: var(--font-display); font-size: clamp(3.2rem, 10vw, 6.5rem); line-height: 0.9; letter-spacing: 2px; color: #fff; margin-bottom: 0.6rem; }
+  .hero h1 .accent { color: var(--accent-light); }
+  .hero-edition { font-family: var(--font-display); font-size: clamp(1.2rem, 3vw, 1.8rem); letter-spacing: 5px; color: var(--muted); margin-bottom: 1.6rem; }
+  .hero-tagline { font-size: 15px; color: var(--muted); max-width: 480px; line-height: 1.7; margin-bottom: 2.4rem; }
+  .live-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-light); background: var(--accent-dim); border: 1px solid var(--accent-mid); border-radius: 99px; padding: 6px 16px; margin-bottom: 2rem; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-light); animation: pulse 1.5s infinite; flex-shrink: 0; }
+  @keyframes pulse { 0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(63,217,122,0.5); } 50% { opacity: 0.7; box-shadow: 0 0 0 5px rgba(63,217,122,0); } }
+  .hero-stats { display: flex; gap: 2.2rem; flex-wrap: wrap; padding-top: 1.8rem; border-top: 1px solid var(--border); }
+  .hstat-n { font-family: var(--font-display); font-size: 2.6rem; letter-spacing: 2px; color: var(--accent-light); line-height: 1; }
+  .hstat-l { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+  /* ── NAV ── */
+  nav { position: sticky; top: 0; z-index: 200; background: rgba(8,12,9,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; padding: 0 2rem; }
+  .nav-links { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a { text-decoration: none; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; padding: 18px 16px; border-bottom: 2px solid transparent; white-space: nowrap; color: var(--muted); transition: color 0.2s, border-color 0.2s; }
+  .nav-links a.active, .nav-links a:hover { color: var(--accent-light); border-bottom-color: var(--accent-light); }
+  .nav-updated { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); letter-spacing: 1px; white-space: nowrap; padding-left: 16px; }
+  .nav-updated .live-dot { width: 6px; height: 6px; }
+
+  .section { position: relative; z-index: 1; padding: 3.5rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .sec-head { margin-bottom: 2.2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+  .sec-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+  .sec-title { font-family: var(--font-display); font-size: clamp(1.8rem, 4.5vw, 3rem); letter-spacing: 2px; color: #fff; line-height: 1; }
+  .sec-sub { font-size: 13px; color: var(--muted); margin-top: 0.5rem; }
+  .section:nth-child(even) { background: var(--bg2); }
+
+  /* ── FILTERS ── */
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.8rem; align-items: center; }
+  .filter-sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+  .fpill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 99px; font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--border); color: var(--muted); background: transparent; cursor: pointer; transition: all 0.18s; white-space: nowrap; }
+  .fpill:hover { border-color: var(--accent-mid); color: var(--text); }
+  .fpill.active { border-color: var(--accent); color: var(--accent-light); background: var(--accent-dim); }
+  .fsearch { background: var(--card); border: 1px solid var(--border); color: var(--text); font-size: 12px; padding: 7px 14px; border-radius: 99px; outline: none; transition: border-color 0.2s; width: 220px; flex-shrink: 0; }
+  .fsearch::placeholder { color: var(--muted); }
+  .fsearch:focus { border-color: var(--accent); }
+  .ftoggle { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); cursor: pointer; user-select: none; margin-left: auto; }
+  .ftoggle input { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
+
+  /* ── PLAYER LIST ── */
+  .players-table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 4px; overflow: hidden; }
+  .players-table th { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); background: var(--bg2); }
+  .players-table th.c, .players-table td.c { text-align: center; }
+  .players-table td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid rgba(30,43,34,0.5); }
+  .players-table tr:last-child td { border-bottom: none; }
+  .players-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .players-table tr.assegnato { opacity: 0.55; }
+  .role-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600; letter-spacing: 1px; border-radius: 3px; padding: 3px 8px; }
+  .role-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .p-nome { font-weight: 500; color: #fff; }
+  .p-squadra { color: var(--muted); font-size: 12px; }
+  .quot-n { font-family: var(--font-display); font-size: 1.1rem; color: var(--text); }
+  .stato-libero { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent-light); }
+  .stato-assegnato { font-size: 12px; color: var(--muted); }
+  .stato-assegnato b { color: var(--text); font-weight: 500; }
+  .stato-assegnato .prezzo { color: var(--gold); font-weight: 600; }
+  .players-empty { text-align: center; padding: 3rem; color: var(--muted); font-size: 13px; }
+
+  /* ── SQUADRE (LIVE) ── */
+  .squadre-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.2rem; }
+  .squadra-card { background: var(--card); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+  .squadra-head { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .squadra-head h3 { font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 2px; }
+  .squadra-crediti { text-align: right; flex-shrink: 0; }
+  .cr-num { font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 1px; }
+  .cr-lbl { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .budget-bar { height: 4px; background: var(--bg2); }
+  .budget-bar-fill { height: 100%; transition: width 0.4s ease; }
+  .squadra-body { padding: 6px 0 10px; }
+  .squadra-role-row { display: flex; align-items: baseline; gap: 8px; padding: 5px 18px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  .squadra-players-inline { padding: 0 18px 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .player-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 3px; padding: 4px 9px; }
+  .player-chip .px { color: var(--gold); font-weight: 600; font-size: 11px; }
+  .no-players { font-size: 11px; color: var(--muted); opacity: 0.6; padding: 0 18px 8px; }
+
+  .loading-msg { text-align: center; padding: 3rem; color: var(--muted); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
+  .loading-dot { display: inline-block; animation: blink 1.2s infinite; }
+  .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+
+  footer { position: relative; z-index: 1; background: var(--bg); border-top: 1px solid var(--border); text-align: center; padding: 2.5rem 2rem; color: var(--muted); font-size: 12px; letter-spacing: 1px; }
+  footer .foot-logo { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 6px; color: #1a3d24; margin-bottom: 0.6rem; }
+
+  @media (max-width: 640px) {
+    .hero { min-height: 50vh; padding: 3.5rem 1.2rem 2.5rem; }
+    nav { padding: 0 1rem; }
+    .nav-updated { display: none; }
+    .section { padding: 2.5rem 1.2rem; }
+    .fsearch { width: 100%; }
+    .ftoggle { margin-left: 0; width: 100%; }
+    .players-table { display: block; overflow-x: auto; white-space: nowrap; }
+    .squadre-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="court-bg"></div>
+
+<div class="hero" id="home">
+  <div class="hero-inner">
+    <div class="hero-eyebrow" id="hero-eyebrow"></div>
+    <h1 id="hero-title"></h1>
+    <div class="hero-edition" id="hero-edition"></div>
+    <p class="hero-tagline" id="hero-tagline"></p>
+    <div class="live-badge"><span class="live-dot"></span> Asta in diretta</div>
+    <div class="hero-stats">
+      <div><div class="hstat-n" id="stat-totali">--</div><div class="hstat-l">Giocatori totali</div></div>
+      <div><div class="hstat-n" id="stat-assegnati">--</div><div class="hstat-l">Assegnati</div></div>
+      <div><div class="hstat-n" id="stat-partecipanti">--</div><div class="hstat-l">Partecipanti</div></div>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <div class="nav-links">
+    <a href="#giocatori" class="active" onclick="setActive(this)">Giocatori</a>
+    <a href="#squadre" onclick="setActive(this)">Squadre</a>
+  </div>
+  <div class="nav-updated" id="nav-updated"></div>
+</nav>
+
+<div class="section" id="giocatori">
+  <div class="section-inner">
+    <div class="sec-head">
+      <div class="sec-label" id="gioc-label"></div>
+      <div class="sec-title">GIOCATORI</div>
+      <div class="sec-sub" id="gioc-sub">Caricamento...</div>
+    </div>
+    <div class="filters" id="gioc-filters" style="display:none">
+      <div id="role-filter-group" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      <div class="filter-sep"></div>
+      <input class="fsearch" id="f-search" type="text" placeholder="Cerca giocatore o squadra..." oninput="applyPlayerFilters()">
+      <label class="ftoggle"><input type="checkbox" id="f-solo-liberi" onchange="applyPlayerFilters()"> Solo liberi</label>
+    </div>
+    <div id="players-container">
+      <div class="loading-msg">Caricamento<span class="loading-dot">.</span><span class="loading-dot">.</span><span class="loading-dot">.</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="squadre">
+  <div class="section-inner">
+    <div class="sec-head">
+      <div class="sec-label" id="sq-label"></div>
+      <div class="sec-title">SQUADRE</div>
+      <div class="sec-sub" id="sq-sub">Caricamento...</div>
+    </div>
+    <div id="squadre-container">
+      <div class="loading-msg">Caricamento<span class="loading-dot">.</span><span class="loading-dot">.</span><span class="loading-dot">.</span></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-logo" id="footer-logo"></div>
+  <div id="footer-sub"></div>
+</footer>
+
+<script src="asta-config.js"></script>
+<script>
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+let ruoliFiltro = 'tutti';
+let playersByRole = {};   // { por: [ {nome, squadra, quot, partecipante, valore} ] }
+let partecipanti = [];    // [ {nome, colIndex, budgetTotale} ]
+let squadreOrdinate = []; // stessi oggetti di "partecipanti" ma con roster calcolato
+
+function initFromConfig() {
+  const root = document.documentElement;
+  Object.entries(ASTA_CONFIG.palette).forEach(([k, v]) => root.style.setProperty(k, v));
+  document.getElementById('page-title').textContent = ASTA_CONFIG.pageTitle;
+  document.getElementById('hero-eyebrow').textContent = ASTA_CONFIG.eyebrow;
+  const parts = ASTA_CONFIG.title.split(ASTA_CONFIG.titleAccent);
+  document.getElementById('hero-title').innerHTML = parts[0] + '<span class="accent">' + ASTA_CONFIG.titleAccent + '</span>' + (parts[1] || '');
+  document.getElementById('hero-edition').textContent = ASTA_CONFIG.edition;
+  document.getElementById('hero-tagline').textContent = ASTA_CONFIG.tagline;
+  setText('gioc-label', ASTA_CONFIG.edition);
+  setText('sq-label', ASTA_CONFIG.edition);
+  document.getElementById('footer-logo').textContent = ASTA_CONFIG.title;
+  document.getElementById('footer-sub').textContent = ASTA_CONFIG.footerSub;
+
+  const fg = document.getElementById('role-filter-group');
+  fg.innerHTML = '<button class="fpill active" id="f-tutti" onclick="setRuoloFiltro(\'tutti\')">Tutti</button>';
+  ASTA_CONFIG.ruoli.forEach(r => {
+    const btn = document.createElement('button');
+    btn.className = 'fpill';
+    btn.id = 'f-' + r.sheet;
+    btn.onclick = () => setRuoloFiltro(r.sheet);
+    btn.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:' + r.color + ';display:inline-block;flex-shrink:0"></span> ' + r.short;
+    btn.dataset.color = r.color;
+    fg.appendChild(btn);
+  });
+  document.getElementById('gioc-filters').style.display = '';
+}
+
+// ── FETCH ─────────────────────────────────────────────────────────────────
+async function fetchRange(rangeA1) {
+  const fields = 'sheets.data.rowData.values(userEnteredValue,formattedValue)';
+  const url = 'https://sheets.googleapis.com/v4/spreadsheets/' + ASTA_CONFIG.spreadsheetId
+    + '?ranges=' + encodeURIComponent(rangeA1)
+    + '&fields=' + encodeURIComponent(fields)
+    + '&key=' + ASTA_CONFIG.apiKey;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status + ' \u00b7 ' + rangeA1);
+  const json = await res.json();
+  return (json.sheets[0].data[0].rowData || []);
+}
+
+function cellText(cell) {
+  if (!cell) return '';
+  const v = cell.userEnteredValue;
+  if (v && v.stringValue != null) return v.stringValue.trim();
+  if (v && v.numberValue != null) return String(v.numberValue);
+  return (cell.formattedValue || '').trim();
+}
+function cellNumber(cell) {
+  const t = cellText(cell).replace(',', '.');
+  const n = parseFloat(t);
+  return isNaN(n) ? 0 : n;
+}
+
+async function loadPartecipanti() {
+  // Riga 2 (nomi), riga 4 (A DISP.), riga 5 (SPESI) -> A1:AC5 copre tutto
+  const rows = await fetchRange(ASTA_CONFIG.foglioAsta + '!A1:BZ5');
+  const rigaNomi  = (rows[1] && rows[1].values) || [];   // indice 1 = riga 2
+  const rigaDisp  = (rows[3] && rows[3].values) || [];   // indice 3 = riga 4
+  const rigaSpesi = (rows[4] && rows[4].values) || [];   // indice 4 = riga 5
+  const result = [];
+  for (let c = 0; c < rigaNomi.length; c++) {
+    const nome = cellText(rigaNomi[c]);
+    if (!nome) continue;
+    const disp  = cellNumber(rigaDisp[c + 1]);
+    const spesi = cellNumber(rigaSpesi[c + 1]);
+    const budgetTotale = (disp + spesi) > 0 ? (disp + spesi) : ASTA_CONFIG.budgetTotaleDefault;
+    result.push({ nome, colIndex: c, budgetTotale, colore: null });
+  }
+  result.forEach((p, i) => { p.colore = ASTA_CONFIG.squadreColori[i % ASTA_CONFIG.squadreColori.length]; });
+  return result;
+}
+
+async function loadRuolo(ruoloCfg) {
+  const rows = await fetchRange(ruoloCfg.sheet + '!A2:E1000');
+  const list = [];
+  rows.forEach(row => {
+    const cells = row.values || [];
+    const nome = cellText(cells[0]);
+    if (!nome) return;
+    list.push({
+      nome,
+      squadra:     cellText(cells[1]),
+      quotazione:  cellNumber(cells[2]),
+      partecipante: cellText(cells[3]),
+      valore:      cellNumber(cells[4]),
+    });
+  });
+  return list;
+}
+
+async function loadTutto() {
+  try {
+    const [parts, ...ruoliData] = await Promise.all([
+      loadPartecipanti(),
+      ...ASTA_CONFIG.ruoli.map(r => loadRuolo(r)),
+    ]);
+    partecipanti = parts;
+    playersByRole = {};
+    ASTA_CONFIG.ruoli.forEach((r, i) => { playersByRole[r.sheet] = ruoliData[i]; });
+    buildSquadre();
+    buildPlayers();
+    updateHeroStats();
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0'), mm = String(now.getMinutes()).padStart(2,'0'), ss = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('nav-updated').innerHTML = '<span class="live-dot"></span> Aggiornato alle ' + hh + ':' + mm + ':' + ss;
+  } catch (err) {
+    const pc = document.getElementById('players-container');
+    if (pc) pc.innerHTML = '<div class="loading-msg" style="color:#d94f4f;">Errore caricamento dati.<br><span style="font-size:11px;">' + err.message + '</span></div>';
+    console.error(err);
+  }
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────
+function updateHeroStats() {
+  let totali = 0, assegnati = 0;
+  ASTA_CONFIG.ruoli.forEach(r => {
+    const list = playersByRole[r.sheet] || [];
+    totali += list.length;
+    assegnati += list.filter(p => p.partecipante).length;
+  });
+  setText('stat-totali', totali);
+  setText('stat-assegnati', assegnati);
+  setText('stat-partecipanti', partecipanti.length);
+  setText('gioc-sub', totali + ' giocatori \u00b7 ' + assegnati + ' gi\u00e0 assegnati');
+  setText('sq-sub', partecipanti.length + ' squadre in formazione');
+}
+
+// ── PLAYER LIST ───────────────────────────────────────────────────────────
+function buildPlayers() {
+  const container = document.getElementById('players-container');
+  container.innerHTML = '';
+  const table = document.createElement('table');
+  table.className = 'players-table';
+  table.innerHTML = '<thead><tr><th style="width:70px">Ruolo</th><th>Giocatore</th><th>Squadra</th><th class="c">Quot.</th><th>Stato</th></tr></thead>';
+  const tbody = document.createElement('tbody');
+  table.appendChild(tbody);
+  container.appendChild(table);
+  renderPlayerRows();
+}
+
+function renderPlayerRows() {
+  const tbody = document.querySelector('#players-container tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  const q = (document.getElementById('f-search').value || '').toLowerCase().trim();
+  const soloLiberi = document.getElementById('f-solo-liberi').checked;
+  let count = 0;
+  ASTA_CONFIG.ruoli.forEach(r => {
+    if (ruoliFiltro !== 'tutti' && ruoliFiltro !== r.sheet) return;
+    (playersByRole[r.sheet] || []).forEach(p => {
+      if (soloLiberi && p.partecipante) return;
+      if (q && !p.nome.toLowerCase().includes(q) && !p.squadra.toLowerCase().includes(q)) return;
+      count++;
+      const tr = document.createElement('tr');
+      if (p.partecipante) tr.className = 'assegnato';
+      const statoHTML = p.partecipante
+        ? '<span class="stato-assegnato">assegnato a <b>' + p.partecipante + '</b> \u00b7 <span class="prezzo">' + p.valore + ' cr</span></span>'
+        : '<span class="stato-libero">Libero</span>';
+      tr.innerHTML = '<td><span class="role-chip" style="background:' + r.cssVars['--r-dim'] + ';color:' + r.color + ';border:1px solid ' + r.cssVars['--r-mid'] + ';"><span class="role-dot" style="background:' + r.color + '"></span>' + r.short + '</span></td>'
+        + '<td class="p-nome">' + p.nome + '</td>'
+        + '<td class="p-squadra">' + p.squadra + '</td>'
+        + '<td class="c quot-n">' + p.quotazione + '</td>'
+        + '<td>' + statoHTML + '</td>';
+      tbody.appendChild(tr);
+    });
+  });
+  if (count === 0) {
+    const container = document.getElementById('players-container');
+    let empty = container.querySelector('.players-empty');
+    if (!empty) { empty = document.createElement('div'); empty.className = 'players-empty'; container.appendChild(empty); }
+    empty.textContent = 'Nessun giocatore trovato.';
+  } else {
+    const empty = document.querySelector('.players-empty');
+    if (empty) empty.remove();
+  }
+}
+
+function setRuoloFiltro(ruolo) {
+  ruoliFiltro = ruolo;
+  document.querySelectorAll('.fpill').forEach(b => { b.classList.remove('active'); b.style.borderColor=''; b.style.color=''; b.style.background=''; });
+  if (ruolo === 'tutti') {
+    document.getElementById('f-tutti').classList.add('active');
+  } else {
+    const btn = document.getElementById('f-' + ruolo);
+    if (btn) { btn.classList.add('active'); btn.style.borderColor = btn.dataset.color; btn.style.color = btn.dataset.color; }
+  }
+  renderPlayerRows();
+}
+function applyPlayerFilters() { renderPlayerRows(); }
+
+// ── SQUADRE (LIVE) ────────────────────────────────────────────────────────
+function buildSquadre() {
+  const container = document.getElementById('squadre-container');
+  container.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'squadre-grid';
+  container.appendChild(grid);
+
+  partecipanti.forEach(part => {
+    const c = part.colore;
+    let spesoTotale = 0;
+    const rosterByRole = {};
+    ASTA_CONFIG.ruoli.forEach(r => {
+      const presi = (playersByRole[r.sheet] || []).filter(p =>
+        p.partecipante && p.partecipante.trim().toUpperCase() === part.nome.trim().toUpperCase()
+      );
+      rosterByRole[r.sheet] = presi;
+      spesoTotale += presi.reduce((s, p) => s + p.valore, 0);
+    });
+    const rimanenti = part.budgetTotale - spesoTotale;
+    const pct = part.budgetTotale > 0 ? Math.min(100, Math.round((spesoTotale / part.budgetTotale) * 100)) : 0;
+
+    const card = document.createElement('div');
+    card.className = 'squadra-card';
+    card.style.borderColor = c.h;
+
+    let bodyHTML = '';
+    ASTA_CONFIG.ruoli.forEach(r => {
+      const presi = rosterByRole[r.sheet];
+      bodyHTML += '<div class="squadra-role-row"><span style="color:' + r.color + '">' + r.short + '</span><span>\u00b7 ' + presi.length + '</span></div>';
+      if (presi.length > 0) {
+        bodyHTML += '<div class="squadra-players-inline">' + presi.map(p =>
+          '<span class="player-chip">' + p.nome + ' <span class="px">' + p.valore + '</span></span>'
+        ).join('') + '</div>';
+      } else {
+        bodyHTML += '<div class="no-players">Nessun giocatore ancora</div>';
+      }
+    });
+
+    card.innerHTML =
+      '<div class="squadra-head" style="background:' + c.b + ';">'
+        + '<h3 style="color:' + c.t + ';">' + part.nome + '</h3>'
+        + '<div class="squadra-crediti"><div class="cr-num" style="color:' + (rimanenti < 0 ? '#d94f4f' : c.t) + ';">' + rimanenti + '</div><div class="cr-lbl">crediti rimasti</div></div>'
+      + '</div>'
+      + '<div class="budget-bar"><div class="budget-bar-fill" style="width:' + pct + '%;background:' + c.t + ';"></div></div>'
+      + '<div class="squadra-body">' + bodyHTML + '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function setActive(el) {
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+}
+
+initFromConfig();
+loadTutto();
+setInterval(loadTutto, (ASTA_CONFIG.refreshSeconds || 20) * 1000);
+</script>
+</body>
+</html>
